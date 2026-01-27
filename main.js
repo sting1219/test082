@@ -130,8 +130,8 @@ function updateResources() {
 }
 
 function updateButtonText() {
-    upgradeButton1.textContent = `Miner Upgrade (🛠️) Lv.${minerLevel} - 💎${Math.floor(minerCost)}`;
-    upgradeButton2.textContent = `Engine Booster (⚡) Lv.${engineLevel} - 💎${Math.floor(engineCost)}`;
+    upgradeButton1.textContent = `Miner Upgrade (🛠️) Lv.${minerLevel} (Next: 💎${Math.floor(minerCost)})`;
+    upgradeButton2.textContent = `Engine Booster (⚡) Lv.${engineLevel} (Next: 💎${Math.floor(engineCost)})`;
 }
 
 // Upgrade functions
