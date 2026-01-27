@@ -1,1 +1,141 @@
-/* Add styles here */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+body {
+    overflow: hidden; /* Hide scrollbars, canvas will fill */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #f0f0f0;
+    background-color: #000; /* Pure black background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    cursor: default;
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1; /* Send canvas to background */
+}
+
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#ui-top {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    font-size: 2em;
+    font-weight: bold;
+    color: #00ffcc; /* Bright color for resources */
+}
+
+#spaceship {
+    font-size: 5em; /* Large emoji */
+    animation: float 3s ease-in-out infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center the spaceship */
+    z-index: 1;
+}
+
+@keyframes float {
+    0% { transform: translate(-50%, -50%) translateY(0px); }
+    50% { transform: translate(-50%, -50%) translateY(-20px); }
+    100% { transform: translate(-50%, -50%) translateY(0px); }
+}
+
+#ui-bottom {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+button {
+    background-color: #333;
+    color: #00ffcc;
+    border: 2px solid #00ffcc;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+button:hover {
+    background-color: #00ffcc;
+    color: #0a0a0a;
+    border-color: #00ffcc;
+}
+
+button:active {
+    background-color: #00e0b3;
+    border-color: #00e0b3;
+}
+
+/* Popup Styles */
+#offline-bonus-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #1a1a1a;
+    border: 2px solid #00ffcc;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 100;
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+    color: #f0f0f0;
+    font-size: 1.2em;
+    max-width: 80%;
+    
+}
+
+#offline-bonus-popup.hidden {
+    display: none;
+}
+
+#offline-bonus-popup h3 {
+    color: #00ffcc;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+#offline-bonus-popup p {
+    margin-bottom: 30px;
+}
+
+#offline-bonus-popup button {
+    background-color: #00ffcc;
+    color: #1a1a1a;
+    border: none;
+    padding: 10px 25px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+#offline-bonus-popup button:hover {
+    background-color: #00e0b3;
+}

@@ -1,14 +1,34 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hello World</title>
-  <link href='/style.css' rel='stylesheet'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinite Space Miner</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Hello, world!</h1>
-  <button onclick="console.log('hello');">Press me</button>
-  <script defer type="text/javascript" src="/main.js"></script>
+    <canvas id="gameCanvas"></canvas>
+    <div id="game-container">
+        <div id="ui-top">
+            <div id="resources">
+                💎 <span id="resource-count">0</span>
+            </div>
+            <div id="production">
+                💎/s <span id="production-rate">0</span>
+            </div>
+        </div>
+        <div id="spaceship">🚀</div>
+        <div id="ui-bottom">
+            <button id="upgrade-button-1">Upgrade 1</button>
+            <button id="upgrade-button-2">Upgrade 2</button>
+        </div>
+    </div>
+    <div id="offline-bonus-popup" class="hidden">
+        <h3>Offline Mining Report</h3>
+        <p>You earned 💎 <span id="offline-resources-earned">0</span> while you were away!</p>
+        <button id="close-popup">Claim</button>
+    </div>
+
+    <script src="main.js"></script>
 </body>
 </html>
