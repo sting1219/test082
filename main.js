@@ -25,6 +25,8 @@ const offlineBonusPopup = document.getElementById('offline-bonus-popup');
 const offlineResourcesEarnedElement = document.getElementById('offline-resources-earned');
 const closePopupButton = document.getElementById('close-popup');
 
+// Game Info Element
+const gameInfoElement = document.getElementById('game-info');
 
 let stars = [];
 const numStars = 200;
@@ -175,6 +177,11 @@ function upgrade2() {
 // Event Listeners for upgrade buttons
 upgradeButton1.addEventListener('click', upgrade1);
 upgradeButton2.addEventListener('click', upgrade2);
+
+// Event Listener for Game Info click to hide
+gameInfoElement.addEventListener('click', () => {
+    gameInfoElement.classList.add('hidden');
+});
 
 // Keyboard Fullscreen Toggle Logic
 window.addEventListener('keydown', (e) => {
