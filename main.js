@@ -3,11 +3,9 @@ const ctx = canvas.getContext('2d');
 
 let resources = 0;
 let displayedResources = 0; // For smooth animation of resource count
-let baseMiningPower = 0; // Initial automatic mining power, set to 0 for active mining
-let minerProductionBonus = 0;
-let engineProductionMultiplier = 1;
-let productionRate = (baseMiningPower + minerProductionBonus) * engineProductionMultiplier; // Total resources per second
 let lastUpdate = Date.now();
+
+let engineProductionMultiplier = 1;
 
 let minerLevel = 0;
 let minerCost = 10; // Initial cost for miner upgrade
@@ -16,14 +14,10 @@ let engineLevel = 0;
 let engineCost = 50; // Initial cost for engine upgrade
 
 const resourceCountElement = document.getElementById('resource-count');
-const productionRateElement = document.getElementById('production-rate');
 const upgradeButton1 = document.getElementById('upgrade-button-1');
 const upgradeButton2 = document.getElementById('upgrade-button-2');
 
 // Offline Bonus Popup Elements
-const offlineBonusPopup = document.getElementById('offline-bonus-popup');
-const offlineResourcesEarnedElement = document.getElementById('offline-resources-earned');
-const closePopupButton = document.getElementById('close-popup');
 
 // Game Info Element
 const gameInfoElement = document.getElementById('game-info');
@@ -36,9 +30,15 @@ let currentStarSpeed = 2; // Use a variable for star speed
 const spaceshipElement = document.getElementById('spaceship');
 let spaceshipX = canvas.width / 2;
 let spaceshipY = canvas.height / 2;
-const spaceshipSpeed = 2; // Pixels per frame
+let spaceshipSpeed = 1; // Pixels per frame, changed to let for upgrades
+let minerDPS = 10; // Initial Damage Per Second for the miner, changed to 10 as per user request
 let spaceshipTarget = null; // Current mining node target
 let isMining = false; // Is the spaceship currently mining?
+
+// --- Floating Texts ---
+let floatingTexts = [];
+const floatingTextSpeed = 0.5; // Pixels per frame upwards
+const floatingTextLife = 60; // Frames until fully faded
 
 // --- Rotation ---
 let currentAngle = 0;
@@ -61,7 +61,9 @@ function generateMiningNode() {
             x: Math.random() * canvas.width,
             y: Math.random() * canvas.height,
             size: miningNodeSize,
-            resources: miningNodeValue + Math.random() * miningNodeValue, // Nodes have varying resources
+            resources: 10, // Fixed resources per node
+            hp: 10, // Fixed HP per node
+            maxHp: 10, // Fixed maxHp per node
             id: Date.now() + Math.random() // Unique ID for tracking
         });
     }
@@ -95,6 +97,38 @@ function drawMiningLaser() {
         ctx.stroke();
     }
 }
+
+// --- Floating Text Drawing ---
+function drawFloatingTexts() {
+    for (let i = floatingTexts.length - 1; i >= 0; i--) {
+        const textObj = floatingTexts[i];
+
+        // Update position and opacity
+        textObj.y -= floatingTextSpeed;
+        textObj.opacity -= 1 / floatingTextLife; // Decrease opacity over its life
+
+        // Remove if faded or off-screen (or life ended)
+        if (textObj.opacity <= 0) {
+            floatingTexts.splice(i, 1);
+            continue;
+        }
+
+        // Draw text
+        ctx.save(); // Save current canvas state
+        ctx.font = 'bold 20px Arial';
+        // Convert hex color to rgba with opacity
+        const hex = textObj.color.replace('#', '');
+        const r = parseInt(hex.substring(0, 2), 16);
+        const g = parseInt(hex.substring(2, 4), 16);
+        const b = parseInt(hex.substring(4, 6), 16);
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${textObj.opacity})`;
+        ctx.textAlign = 'center';
+        ctx.fillText(textObj.text, textObj.x, textObj.y);
+        ctx.restore(); // Restore canvas state
+    }
+}
+// --- Floating Text Drawing ---
+
 // --- End Mining Nodes ---
 
 // --- Spaceship Movement ---
@@ -150,34 +184,58 @@ function moveSpaceship() {
     currentAngle += angleDiff * rotationSpeed;
     
     if (distance > miningNodeSize) { // Move if not at target
-        // Use the direct angle for movement to prevent orbiting
-        spaceshipX += Math.cos(targetAngle) * spaceshipSpeed;
-        spaceshipY += Math.sin(targetAngle) * spaceshipSpeed;
+        if (distance < spaceshipSpeed) { // If very close, jump directly to target
+            spaceshipX = spaceshipTarget.x;
+            spaceshipY = spaceshipTarget.y;
+        } else { // Otherwise, move normally
+            spaceshipX += Math.cos(targetAngle) * spaceshipSpeed;
+            spaceshipY += Math.sin(targetAngle) * spaceshipSpeed;
+        }
         spaceshipElement.classList.remove('mining');
     } else { // Arrived at target, start mining
         isMining = true;
         spaceshipElement.classList.add('mining');
-        
-        setTimeout(() => {
-            if (!spaceshipTarget) return; // Target might have been removed
-
-            resources += spaceshipTarget.resources * engineProductionMultiplier;
-            displayedResources = resources;
-            resourceCountElement.textContent = Math.floor(displayedResources);
-
-            miningNodes = miningNodes.filter(node => node.id !== spaceshipTarget.id);
-            spaceshipTarget = null;
-            isMining = false;
-            spaceshipElement.classList.remove('mining');
-            findNearestMiningNode();
-            updateProductionRate();
-        }, 1000); // Mine for 1 second
     }
 
     // Update HTML spaceship position and rotation
     spaceshipElement.style.left = `${spaceshipX}px`;
     spaceshipElement.style.top = `${spaceshipY}px`;
     spaceshipElement.style.transform = `translate(-50%, -50%) rotate(${currentAngle * 180 / Math.PI + 90}deg)`; // Use smoothed angle
+}
+
+function applyDamageToMineral(deltaTime) {
+    if (!isMining || !spaceshipTarget) return;
+
+    // Reduce mineral HP
+    const damageDealt = minerDPS * deltaTime;
+    spaceshipTarget.hp -= damageDealt;
+    console.log(`Mining: minerDPS=${minerDPS.toFixed(2)}, deltaTime=${deltaTime.toFixed(2)}, damageDealt=${damageDealt.toFixed(2)}, mineral HP left=${spaceshipTarget.hp.toFixed(2)}`);
+
+    // Check if mineral is destroyed
+    if (spaceshipTarget.hp <= 0) {
+        const actualResourcesGained = spaceshipTarget.resources * engineProductionMultiplier;
+        resources += actualResourcesGained;
+        displayedResources = resources;
+        resourceCountElement.textContent = Math.floor(displayedResources);
+
+        // Create floating text
+        floatingTexts.push({
+            text: `+${Math.floor(actualResourcesGained)}`,
+            x: spaceshipTarget.x,
+            y: spaceshipTarget.y,
+            opacity: 1,
+            life: floatingTextLife, // Use predefined life for consistency
+            color: '#00ffcc' // Fixed UI accent color
+        });
+
+        // Remove the mined node
+        miningNodes = miningNodes.filter(node => node.id !== spaceshipTarget.id);
+        spaceshipTarget = null;
+        isMining = false; // Reset mining state
+        spaceshipElement.classList.remove('mining'); // Remove mining animation
+        findNearestMiningNode(); // Find a new target
+        updateButtonText(); // Update production rate if it depends on miner level (it does now)
+    }
 }
 // --- End Spaceship Movement ---
 
@@ -187,9 +245,9 @@ function saveGame() {
         resources: resources,
         minerLevel: minerLevel,
         minerCost: minerCost,
-        engineLevel: engineLevel, // 중복된 키 수정
+        engineLevel: engineLevel,
         engineCost: engineCost,
-        lastSaveTime: Date.now(), // Save current time for offline bonus calculation
+        lastSaveTime: Date.now(),
         // Save relevant mining node properties if necessary (e.g., if they persist)
         // For now, mining nodes do not persist
     };
@@ -207,19 +265,21 @@ function loadGame() {
         minerCost = gameState.minerCost || 10;
         engineLevel = gameState.engineLevel || 0;
         engineCost = gameState.engineCost || 50;
+        console.log(`Game Loaded! Engine Cost: ${engineCost}`);
         lastUpdate = Date.now(); // Set lastUpdate to now for correct deltaTime calculation
 
         // Recalculate derived stats and update UI
-        minerProductionBonus = minerLevel; // Each level adds 1 production
-        currentStarSpeed = 2 + (engineLevel * 0.5); // Initial + 0.5 per level
-        engineProductionMultiplier = 1 + (engineLevel * 0.1); // Initial + 0.1 per level
+        currentStarSpeed = 2 + (engineLevel * 0.5); // This remains 0.5 for visual effect
+        engineProductionMultiplier = 1 + (engineLevel * 1); // Recalculate production multiplier based on engine level
+        spaceshipSpeed = 1 + (engineLevel * 0.2); // Recalculate spaceship speed based on engine level (reverted)
+        minerDPS = 10 + (minerLevel * 10); // Recalculate minerDPS based on miner level
         
-        updateProductionRate();
         updateButtonText();
         initStars(); // Reinitialize stars with potentially new speed
+        console.log(`Game Loaded! Miner Level: ${minerLevel}, Calculated minerDPS: ${minerDPS}`);
         
         console.log('Game Loaded!');
-        return gameState.lastSaveTime; // Return last save time for offline bonus
+        return null; // No longer returning lastSaveTime
     }
     console.log('No saved game found.');
     return null;
@@ -263,28 +323,9 @@ function drawStars() {
     });
 }
 
-function updateProductionRate() {
-    productionRate = (baseMiningPower + minerProductionBonus) * engineProductionMultiplier;
-    productionRateElement.textContent = productionRate.toFixed(1);
-}
 
-function updateResources() {
-    if (isMining) return; // Don't produce resources while mining (they are collected at the end)
 
-    const now = Date.now();
-    const deltaTime = (now - lastUpdate) / 1000; // time in seconds
-    resources += productionRate * deltaTime;
-    lastUpdate = now;
 
-    // Smoothly animate displayed resources
-    if (displayedResources < resources) {
-        displayedResources = Math.min(resources, displayedResources + productionRate * deltaTime * 0.5); // Animate faster than production
-    } else if (displayedResources > resources) { // If resources were spent, immediately reflect it
-        displayedResources = resources;
-    }
-    
-    resourceCountElement.textContent = Math.floor(displayedResources);
-}
 
 function updateButtonText() {
     upgradeButton1.textContent = `Miner Upgrade (🛠️) Lv.${minerLevel} (Next: 💎${Math.floor(minerCost)})`;
@@ -295,11 +336,11 @@ function updateButtonText() {
 function upgrade1() {
     if (resources >= minerCost) {
         resources -= minerCost;
-        displayedResources = resources; // Immediately update displayed resources
+        resourceCountElement.textContent = Math.floor(resources);
         minerLevel++;
-        minerProductionBonus += 1; // Each level adds 1 production
+        minerDPS += 10; // Each miner level adds 10 DPS
         minerCost = Math.floor(minerCost * 1.5); // Increase cost by 50%
-        updateProductionRate();
+        console.log(`Miner Upgraded! Level: ${minerLevel}, Current minerDPS: ${minerDPS}`);
         updateButtonText();
         saveGame(); // Save game after upgrade
     } else {
@@ -311,16 +352,17 @@ function upgrade1() {
 function upgrade2() {
     if (resources >= engineCost) {
         resources -= engineCost;
-        displayedResources = resources; // Immediately update displayed resources
+        resourceCountElement.textContent = Math.floor(resources);
         engineLevel++;
-        currentStarSpeed += 0.5; // Increase star speed
-        engineProductionMultiplier += 0.2; // Increase production multiplier by 0.2
-        engineCost = Math.floor(engineCost * 1.8); // Increase cost by 80%
+        engineCost = Math.floor(engineCost * 1.8); // Increase cost by 80% (re-added)
+        currentStarSpeed += 0.5; // Increase star speed (this remains 0.5 as it's visual)
+        engineProductionMultiplier += 1; // Increase production multiplier by 1 per level
+        spaceshipSpeed += 0.2; // Increase spaceship's actual movement speed by 0.2 per level (reverted)
+        console.log(`Engine Upgraded! Level: ${engineLevel}, Current engineCost: ${engineCost}`);
         
         // Reinitialize stars with new speed to make the change visible
         initStars(); 
         
-        updateProductionRate();
         updateButtonText();
         saveGame(); // Save game after upgrade
     } else {
@@ -355,33 +397,9 @@ initStars();
 setInterval(generateMiningNode, 5000);
 
 
-const lastSaveTime = loadGame(); // Load game state and get last save time
-
-// --- Offline Bonus Calculation ---
-if (lastSaveTime) {
-    const timeOffline = (Date.now() - lastSaveTime) / 1000; // time in seconds
-    if (timeOffline > 60) { // Only show bonus if offline for more than 60 seconds (1 minute)
-        // Calculate production rate based on loaded game state
-        const effectiveProductionRate = (baseMiningPower + minerProductionBonus) * engineProductionMultiplier;
-        const offlineEarned = effectiveProductionRate * timeOffline;
-        
-        if (offlineEarned > 0) {
-            resources += offlineEarned;
-            displayedResources = resources; // Immediately update displayed resources with offline bonus
-            offlineResourcesEarnedElement.textContent = Math.floor(offlineEarned);
-            offlineBonusPopup.classList.remove('hidden');
-        }
-    }
-}
-
-closePopupButton.addEventListener('click', () => {
-    offlineBonusPopup.classList.add('hidden');
-    saveGame(); // Save game state after claiming offline bonus
-});
 // --- End Offline Bonus Calculation ---
 
 
-updateProductionRate(); // Initial update of production rate display
 updateButtonText(); // Initial update of button text
 
 // Save game periodically and on unload
@@ -390,13 +408,19 @@ window.addEventListener('beforeunload', saveGame);
 
 // Game Loop (will be expanded later)
 function gameLoop() {
+    const now = Date.now();
+    const deltaTime = (now - lastUpdate) / 1000; // time in seconds
+    lastUpdate = now;
+
     drawStars();
     drawMiningNodes(); // 광물 노드 그리기
     drawMiningLaser(); // Draw laser if mining
+    drawFloatingTexts(); // Draw and update floating texts
 
     moveSpaceship(); // 우주선 이동
+    applyDamageToMineral(deltaTime); // Apply damage to mineral if mining
 
-    updateResources(); // 자원 업데이트
+
     requestAnimationFrame(gameLoop);
 }
 
