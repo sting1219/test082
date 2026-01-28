@@ -33,6 +33,7 @@ canvas {
     align-items: center;
     padding: 20px;
     box-sizing: border-box;
+    z-index: 10; /* 로켓 (z-index: 1) 위에 UI 컨테이너를 배치 */
 }
 
 #ui-top {
@@ -60,6 +61,20 @@ canvas {
     50% { transform: translate(-50%, -50%) translateY(-20px); }
     100% { transform: translate(-50%, -50%) translateY(0px); }
 }
+
+@keyframes mine {
+    0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+    25% { transform: translate(-53%, -48%) rotate(-2deg) scale(1.05); }
+    50% { transform: translate(-48%, -52%) rotate(2deg) scale(1.05); }
+    75% { transform: translate(-52%, -49%) rotate(-1deg) scale(1.05); }
+    100% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+}
+
+.mining {
+    animation: mine 0.5s ease-in-out infinite !important;
+}
+
+/* #spaceship 스타일은 제거되었으므로 여기에 포함하지 않습니다. */
 
 #ui-bottom {
     width: 100%;
