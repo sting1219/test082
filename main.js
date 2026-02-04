@@ -32,6 +32,7 @@ let minerDPS = 10; // Initial Damage Per Second for the miner
 let spaceshipTarget = null; // Current mining node target
 let isMining = false; // Initialize isMining state
 let floatAngle = 0;
+let shakeAngle = 0; // For smooth shaking animation
 
 // --- Particle System -- -
 let particles = [];
@@ -69,8 +70,18 @@ let targetCameraX = 0;
 let targetCameraY = 0;
 const cameraLerpFactor = 0.05;
 
+// --- Constants ---
+const TWO_PI = Math.PI * 2;
+
 function lerp(start, end, amt) {
     return (1 - amt) * start + amt * end;
+}
+
+function hexToRgb(hex) {
+    const r = parseInt(hex.substring(1, 3), 16);
+    const g = parseInt(hex.substring(3, 5), 16);
+    const b = parseInt(hex.substring(5, 7), 16);
+    return { r, g, b };
 }
 
 
@@ -122,13 +133,13 @@ function drawMiningNodes() {
         let drawY = node.y;
 
         if (isMining && spaceshipTarget && node.id === spaceshipTarget.id) {
-            drawX += (Math.random() - 0.5) * 4;
-            drawY += (Math.random() - 0.5) * 4;
+            drawX += Math.sin(shakeAngle) * 2;
+            drawY += Math.cos(shakeAngle) * 2;
         }
 
         ctx.fillStyle = node.isRare ? 'gold' : 'lightgray';
         ctx.beginPath();
-        ctx.arc(drawX, drawY, node.currentSize, 0, Math.PI * 2);
+        ctx.arc(drawX, drawY, node.currentSize, 0, TWO_PI);
         ctx.fill();
     });
 }
@@ -146,10 +157,7 @@ function drawFloatingTexts() {
 
         ctx.save();
         ctx.font = 'bold 20px Arial';
-        const hex = textObj.color.replace('#', '');
-        const r = parseInt(hex.substring(0, 2), 16);
-        const g = parseInt(hex.substring(2, 4), 16);
-        const b = parseInt(hex.substring(4, 6), 16);
+        const { r, g, b } = textObj.rgbColor;
         ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${textObj.opacity})`;
         ctx.textAlign = 'center';
         ctx.fillText(textObj.text, textObj.x, textObj.y);
@@ -201,7 +209,7 @@ function spawnBoosterParticles() {
 function spawnResourceParticles(node) {
     const numParticles = 1;
     for (let i = 0; i < numParticles; i++) {
-        const angle = Math.random() * Math.PI * 2;
+        const angle = Math.random() * TWO_PI;
         const startX = node.x + (Math.random() - 0.5) * node.currentSize;
         const startY = node.y + (Math.random() - 0.5) * node.currentSize;
 
@@ -230,8 +238,8 @@ function moveSpaceship() {
 
     targetAngle = Math.atan2(dy, dx);
     let angleDiff = targetAngle - currentAngle;
-    while (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
-    while (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
+    while (angleDiff > Math.PI) angleDiff -= TWO_PI;
+    while (angleDiff < -Math.PI) angleDiff += TWO_PI;
 
     currentAngle += angleDiff * rotationSpeed;
 
@@ -256,7 +264,7 @@ function moveSpaceship() {
 
 function spawnContactParticles(x, y, color = 'lightgray') {
     for (let i = 0; i < 3; i++) {
-        const angle = Math.random() * Math.PI * 2;
+        const angle = Math.random() * TWO_PI;
         const speed = Math.random() * 0.5;
         particles.push({
             x: x,
@@ -349,7 +357,7 @@ function drawStars() {
     ctx.fillStyle = 'white';
     stars.forEach(star => {
         ctx.beginPath();
-        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctx.arc(star.x, star.y, star.size, 0, TWO_PI);
         ctx.fill();
 
         star.y += star.speed;
@@ -430,7 +438,7 @@ window.addEventListener('beforeunload', saveGame);
 
 function spawnMiningDebrisParticles(x, y, color = 'lightgray') {
     for (let i = 0; i < 2; i++) {
-        const angle = Math.random() * Math.PI * 2;
+        const angle = Math.random() * TWO_PI;
         const speed = Math.random() * 2 + 1;
         particles.push({
             x: x, y: y,
@@ -446,7 +454,7 @@ function spawnMiningDebrisParticles(x, y, color = 'lightgray') {
 function spawnExplosionParticles(x, y, color) {
     const numExplosionParticles = 30;
     for (let i = 0; i < numExplosionParticles; i++) {
-        const angle = Math.random() * Math.PI * 2;
+        const angle = Math.random() * TWO_PI;
         const speed = Math.random() * 4 + 2;
         particles.push({
             x: x, y: y,
@@ -475,11 +483,13 @@ function applyDamageToMineral(deltaTime) {
         if (spaceshipTarget.hp <= 0) {
             resources += spaceshipTarget.resources * engineProductionMultiplier;
             resourceCountElement.textContent = Math.floor(resources);
+            const color = spaceshipTarget.isRare ? '#FFD700' : '#FFFFFF';
             floatingTexts.push({
                 x: spaceshipTarget.x,
                 y: spaceshipTarget.y,
                 text: `+${Math.floor(spaceshipTarget.resources * engineProductionMultiplier)}`,
-                color: spaceshipTarget.isRare ? '#FFD700' : '#FFFFFF',
+                color: color,
+                rgbColor: hexToRgb(color),
                 opacity: 1
             });
             screenShakeMagnitude = 5;
@@ -500,6 +510,7 @@ function gameLoop() {
     const deltaTime = (now - lastUpdate) / 1000;
     lastUpdate = now;
     floatAngle += 0.05;
+    shakeAngle += 0.2;
 
     let shakeX = 0;
     let shakeY = 0;
@@ -535,8 +546,8 @@ function gameLoop() {
     
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
-    for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
+    const newParticles = [];
+    for (const p of particles) {
 
         if (p.type === 'resource_attraction') {
             const dx = spaceshipX - p.x;
@@ -544,7 +555,6 @@ function gameLoop() {
             const distance = Math.sqrt(dx * dx + dy * dy);
             const attractionSpeed = 3;
             if (distance < 10) {
-                particles.splice(i, 1);
                 continue;
             }
             p.vx = (dx / distance) * attractionSpeed;
@@ -555,16 +565,15 @@ function gameLoop() {
         p.y += p.vy;
         p.life--;
 
-        if (p.life <= 0) {
-            particles.splice(i, 1);
-            continue;
+        if (p.life > 0) {
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, TWO_PI);
+            ctx.fill();
+            newParticles.push(p);
         }
-
-        ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
     }
+    particles = newParticles;
     ctx.restore();
     
     ctx.restore();
