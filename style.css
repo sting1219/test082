@@ -1,225 +1,52 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #f0f0f0; background-color: #1a0033; min-height: 100vh; }
+canvas { display: block; }
 
-body {
-    overflow: hidden; /* Hide scrollbars, canvas will fill */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #f0f0f0;
-    background-color: #1a0033; /* Deep purple nebula background */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    cursor: default;
-}
-
-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: -1; /* Send canvas to background */
-    image-rendering: pixelated; /* Ensures pixel art elements are not blurred */
-}
-
-/* CRT Overlay for Scanlines and Flicker */
+/* CRT Overlay */
 .crt-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none; /* Allow interaction with elements beneath */
-    z-index: 1000; /* Ensure it's on top of everything */
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000;
     background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
                 linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-    background-size: 100% 2px, 3px 100%;
-    mix-blend-mode: overlay; /* Blend nicely with content */
-    opacity: 0.8; /* Subtle transparency */
-    animation: flicker 0.15s infinite alternate; /* Subtle flicker effect */
-    box-shadow: inset 0 0 5em rgba(0, 0, 0, 0.75); /* Vignette effect */
+    background-size: 100% 2px, 3px 100%; mix-blend-mode: overlay; opacity: 0.5; animation: flicker 0.15s infinite alternate;
 }
-
-@keyframes flicker {
-    0% { opacity: 0.8; }
-    50% { opacity: 0.85; }
-    100% { opacity: 0.75; }
-}
-
-#game-container {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    box-sizing: border-box;
-    z-index: 10;
-}
+@keyframes flicker { 0% { opacity: 0.4; } 50% { opacity: 0.5; } 100% { opacity: 0.3; } }
 
 #ui-top {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 20px;
-    font-size: 2em;
-    font-weight: bold;
-    color: #00ffcc; /* Bright color for resources */
+    position: absolute; top: 10px; width: 100%; display: flex; justify-content: space-between;
+    padding: 10px 20px; font-size: 1.2em; font-weight: bold; color: #00ffcc; z-index: 10;
 }
-
 #ui-bottom {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    padding: 20px;
+    position: absolute; bottom: 20px; width: 100%; display: flex; justify-content: center; gap: 20px; z-index: 10;
 }
 
 button {
-    background-color: #333;
-    color: #00ffcc;
-    border: 2px solid #00ffcc;
-    padding: 15px 30px;
-    font-size: 1.2em;
-    cursor: pointer;
-    border-radius: 8px;
-    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    background-color: #222; color: #00ffcc; border: 1px solid #00ffcc; padding: 10px;
+    font-size: 0.9em; cursor: pointer; border-radius: 4px; transition: all 0.3s;
 }
+button:hover { background-color: #00ffcc; color: #111; }
+button.prestige-btn { border-color: #bc13fe; color: #bc13fe; }
+button.prestige-btn:hover { background: #bc13fe; color: white; }
+button.dimension-btn { border-color: #ff8c00; color: #ff8c00; }
+button.dimension-btn:hover { background: #ff8c00; color: white; }
 
-button:hover {
-    background-color: #00ffcc;
-    color: #0a0a0a;
-    border-color: #00ffcc;
-}
+#view-stats-btn, #mute-btn { padding: 5px 10px; font-size: 0.8em; }
+.hidden { display: none !important; }
 
-button:active {
-    background-color: #00e0b3;
-    border-color: #00e0b3;
-}
-
-/* Popup Styles */
-#offline-bonus-popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #1a1a1a;
-    border: 2px solid #00ffcc;
-    padding: 30px;
-    border-radius: 10px;
-    text-align: center;
-    z-index: 100;
-    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
-    color: #f0f0f0;
-    font-size: 1.2em;
-    max-width: 80%;
-    
-}
-
-#offline-bonus-popup.hidden {
-    display: none;
-}
-
-#offline-bonus-popup h3 {
-    color: #00ffcc;
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 1.5em;
-}
-
-#offline-bonus-popup p {
-    margin-bottom: 30px;
-}
-
-#offline-bonus-popup button {
-    background-color: #00ffcc;
-    color: #1a1a1a;
-    border: none;
-    padding: 10px 25px;
-    font-size: 1em;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-}
-
-#offline-bonus-popup button:hover {
-    background-color: #00e0b3;
-}
-
-/* Game Info Section */
 #game-info {
-    position: absolute; /* Position relative to game-container */
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%); /* Center it */
-    color: #e0e0e0;
-    font-size: 1.1em;
-    text-align: center;
-    max-width: 600px;
-    padding: 20px;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
-    z-index: 2; /* Above spaceship, below UI top/bottom */
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.85); border: 2px solid #00ffcc; padding: 40px; border-radius: 15px; text-align: center; z-index: 2000;
 }
 
-#game-info.hidden {
-    display: none;
+#stats-window {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background-color: rgba(20, 20, 35, 0.95); border: 3px solid #00ffcc; padding: 20px; border-radius: 15px; width: 350px; z-index: 2000; color: white;
 }
 
-#game-info h1 {
-    color: #00ffcc;
-    font-size: 2em;
-    margin-bottom: 15px;
-}
-
-#game-info p {
-    margin-bottom: 10px;
-    line-height: 1.5;
-}
-
-#game-info ul {
-    text-align: left;
-    margin: 15px auto;
-    padding-left: 20px;
-    list-style-type: '🚀 '; /* Custom list bullet */
-}
-
-#game-info ul li {
-    margin-bottom: 8px;
-}
-
-/* Footer Styles */
-footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    text-align: center;
-    padding: 10px 0;
-    color: #888;
-    font-size: 0.8em;
-    background-color: rgba(0, 0, 0, 0.7);
-    z-index: 10;
-}
-
-footer a {
-    color: #00ffcc;
-    text-decoration: none;
-}
-
-footer a:hover {
-    text-decoration: underline;
-}
-
-/* Hide specific UI elements when body has .fullscreen-active */
-body.fullscreen-active #ui-top,
-body.fullscreen-active #ui-bottom,
-body.fullscreen-active #offline-bonus-popup,
-body.fullscreen-active #game-info, /* Added #game-info to the hidden list */
-body.fullscreen-active footer { /* Also hiding the footer in fullscreen mode */
-    display: none !important;
-}
+#stats-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+#stats-tabs button { padding: 8px 15px; font-size: 0.9em; background: #222; }
+#stats-tabs button.active { background: #00ffcc; color: #111; }
+.achievement-item { background: rgba(255, 255, 255, 0.05); padding: 10px; border-radius: 5px; margin-bottom: 5px; }
+.achievement-item.achieved { background: rgba(0, 255, 204, 0.1); border-left: 4px solid #00ffcc; }
+#close-stats-btn { margin-top: 20px; width: 100%; background: #ff0077; border-color: #ff0077; }
+#close-stats-btn:hover { background: #ff3399; }
+footer { position: fixed; bottom: 0; width: 100%; text-align: center; color: #888; font-size: 0.8em; }

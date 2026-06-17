@@ -15,8 +15,40 @@
     <div id="game-container">
         <div id="ui-top">
             <div id="resources">
-                💎 <span id="resource-count">0</span>
+                💎 <span id="resource-count">0</span> | ⚛️ <span id="dark-matter-count">0</span>
             </div>
+            <div id="stage-container">
+                <span id="dimension-name" style="color: #00ffff; font-weight: bold; display: block; font-size: 0.8em;">Material Universe</span>
+                <span id="stage-text">Level: 1 (0 / 30)</span>
+            </div>
+            <div id="ui-top-right">
+                <button id="mute-btn">🔈</button>
+                <button id="view-stats-btn">📊 Stats</button>
+            </div>
+        </div>
+
+        <!-- New Stats Window -->
+        <div id="stats-window" class="hidden">
+            <h2>Cosmic Mission Center</h2>
+            <div id="stats-tabs">
+                <button id="tab-stats-btn" class="active">Stats</button>
+                <button id="tab-achievements-btn">Achievements</button>
+            </div>
+            
+            <div id="stats-tab-content">
+                <div id="stat-list">
+                    <p>Real-time DPS: <span id="stat-dps">0</span></p>
+                    <p>Crit Chance: <span id="stat-crit-chance">0%</span></p>
+                    <p>Crit Multiplier: <span id="stat-crit-mult">x0</span></p>
+                    <p>Current Stage: <span id="stat-stage">1</span></p>
+                    <p>Total Ores Mined: <span id="stat-total-mined">0</span></p>
+                    <p>Achievement Bonus: <span id="stat-ach-bonus">+0%</span></p>
+                </div>
+                <div id="achievement-list" class="hidden">
+                    <!-- Achievements dynamically generated here -->
+                </div>
+            </div>
+            <button id="close-stats-btn">Close</button>
         </div>
         <div id="game-info">
             <h1>Infinite Space Miner</h1>
