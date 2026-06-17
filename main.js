@@ -74,7 +74,6 @@ function toggleMute() {
 // --- Evolution & Comet ---
 var shipTier = 1;
 var thrustColor = '#00ffff';
-var tierImages = { 1: new Image() }; tierImages[1].src = 'images/spaceship_animation.png';
 var comet = null, isFeverTime = false, feverTimer = 0;
 const FEVER_DURATION = 30, numStars = 200;
 var currentStarSpeed = 0.8;
@@ -211,8 +210,7 @@ function draw() {
     miningNodes.forEach(n => { ctx.fillStyle = n.color; ctx.beginPath(); ctx.arc(n.x, n.y, n.currentSize, 0, TWO_PI); ctx.fill(); });
     particles.forEach(p => { ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, TWO_PI); ctx.fill(); ctx.restore(); });
     const fy = Math.sin(spaceship.floatAngle) * 5; ctx.save(); ctx.translate(spaceship.x, spaceship.y + fy); ctx.rotate(spaceship.currentAngle + Math.PI / 2);
-    if (tierImages[shipTier] && tierImages[shipTier].complete && tierImages[shipTier].naturalWidth !== 0) { ctx.drawImage(tierImages[shipTier], -spaceship.width / 2, -spaceship.height / 2, spaceship.width, spaceship.height); }
-    else { ctx.beginPath(); ctx.moveTo(0, -20); ctx.lineTo(-15, 20); ctx.lineTo(15, 20); ctx.closePath(); ctx.fillStyle = shipTier === 3 ? '#ff00ff' : (shipTier === 2 ? '#ff8c00' : '#00ffff'); ctx.fill(); }
+    ctx.beginPath(); ctx.moveTo(0, -20); ctx.lineTo(-15, 20); ctx.lineTo(15, 20); ctx.closePath(); ctx.fillStyle = shipTier === 3 ? '#ff00ff' : (shipTier === 2 ? '#ff8c00' : '#00ffff'); ctx.fill();
     ctx.restore();
     drawFloatingTexts(ctx); updateAndDrawDamageTexts(ctx); ctx.restore(); if (comet) drawComet(ctx); ctx.restore();
     resourceCountElement.textContent = formatNumber(resources); darkMatterCountElement.textContent = formatNumber(darkMatter); updateStageUI();
