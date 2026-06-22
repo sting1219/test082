@@ -1,1 +1,3 @@
-google.com, pub-3565697632228043, DIRECT, f08c47fec0942fa0
+# Google AdSense ads.txt
+# 중요: 아래 pub-0000000000000000 부분을 본인의 실제 게시자 ID로 변경하세요.
+google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0

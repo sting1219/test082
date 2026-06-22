@@ -3,81 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Infinite Space Miner</title>
-    <meta name="google-adsense-account" content="ca-pub-3565697632228043">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3565697632228043"
-     crossorigin="anonymous"></script>
+    <title>Space Mining Clicker - 우주 채굴 방치형 게임</title>
+    <meta name="description" content="우주선을 강화하고 암흑 물질을 모아 멀티버스를 개척하는 본격 우주 채굴 방치형 클리커 게임!">
+    <!-- Google AdSense: 프로덕션 환경에서만 로드 -->
+    <script>
+        // 로컬 환경에서는 AdSense 스크립트 로드 안함
+        if (window.location.protocol !== 'file:') {
+            const script = document.createElement('script');
+            script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3565697632228043';
+            script.async = true;
+            script.crossOrigin = 'anonymous';
+            document.head.appendChild(script);
+        }
+    </script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="crt-overlay"></div>
-    <canvas id="gameCanvas"></canvas>
-    <div id="game-container">
-        <div id="ui-top">
-            <div id="resources">
-                💎 <span id="resource-count">0</span> | ⚛️ <span id="dark-matter-count">0</span>
-            </div>
-            <div id="stage-container">
-                <span id="dimension-name" style="color: #00ffff; font-weight: bold; display: block; font-size: 0.8em;">Material Universe</span>
-                <span id="stage-text">Level: 1 (0 / 30)</span>
-            </div>
-            <div id="ui-top-right">
-                <button id="mute-btn">🔈</button>
-                <button id="view-stats-btn">📊 Stats</button>
-            </div>
+    
+    <div id="main-wrapper">
+        <div id="game-layout">
+            <!-- Left: Game Screen -->
+            <section id="canvas-section">
+                <canvas id="gameCanvas"></canvas>
+                <div id="hot-time-banner" class="hidden">🔥 주말 핫타임! 자원 획득 2배 버프 활성화</div>
+                <div id="ui-overlay-top">
+                    <div id="stage-info">
+                        <span id="dimension-name">Material Universe</span>
+                        <span id="stage-text">Level: 1 (0 / 30)</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right: Sidebar UI -->
+            <aside id="sidebar-section">
+                <div class="sidebar-header">
+                    <h2>Mission Control</h2>
+                    <div id="resources-display">
+                        <div>💎 <span id="resource-count">0</span></div>
+                        <div>⚛️ <span id="dark-matter-count">0</span></div>
+                    </div>
+                </div>
+
+                <div class="sidebar-tabs">
+                    <button id="tab-upgrade-btn" class="active">Upgrades</button>
+                    <button id="tab-stats-sidebar-btn">Stats</button>
+                </div>
+
+                <div class="sidebar-scroll-area">
+                    <!-- Upgrade Section -->
+                    <div id="upgrade-panel" class="sidebar-panel">
+                        <div class="button-group">
+                            <label>Basic Upgrades</label>
+                            <button id="upgrade-button-1">Miner Lv.0</button>
+                            <button id="upgrade-button-2">Engine Lv.0</button>
+                            <button id="upgrade-button-3">Crit Lv.0</button>
+                        </div>
+                        <div class="button-group">
+                            <label>Advanced Upgrades</label>
+                            <button id="upgrade-button-perm" class="perm-upgrade">Dark Energy Lv.0</button>
+                            <button id="prestige-button" class="prestige-btn">Prestige</button>
+                            <button id="dimension-jump-button" class="dimension-btn hidden">Jump Dimension</button>
+                        </div>
+                    </div>
+
+                    <!-- Stats & Achievement Section -->
+                    <div id="stats-panel" class="sidebar-panel hidden">
+                        <div id="stat-list">
+                            <p>DPS: <span id="stat-dps">0</span></p>
+                            <p>Crit: <span id="stat-crit-chance">0%</span> (x<span id="stat-crit-mult">0</span>)</p>
+                            <p>Total Mined: <span id="stat-total-mined">0</span></p>
+                            <p>Bonus: <span id="stat-ach-bonus">+0%</span></p>
+                        </div>
+                        <hr>
+                        <h3>Achievements</h3>
+                        <div id="achievement-list">
+                            <!-- Dynamically filled -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-footer">
+                    <div class="control-buttons">
+                        <button id="mute-btn">🔈</button>
+                        <button id="reset-btn">Reset</button>
+                    </div>
+                    <div class="save-management-buttons" style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <button id="export-save-btn" style="flex: 1; font-size: 0.8em; text-align: center;">Export Save</button>
+                        <button id="import-save-btn" style="flex: 1; font-size: 0.8em; text-align: center;">Import Save</button>
+                    </div>
+                    <div class="adsense-sidebar">
+                        <!-- Sidebar Ad (프로덕션 환경에서만 표시) -->
+                        <ins class="adsbygoogle"
+                             style="display:block; min-height: 250px;"
+                             data-ad-client="ca-pub-3565697632228043"
+                             data-ad-slot="XXXXXXXXXX"
+                             data-ad-format="auto"
+                             data-full-width-responsive="true"></ins>
+                        <script>
+                             if (window.location.protocol !== 'file:') {
+                                 try {
+                                     (window.adsbygoogle = window.adsbygoogle || []).push({});
+                                 } catch (e) {
+                                     console.log("AdSense 로드 실패:", e.message);
+                                 }
+                             } else {
+                                 console.log("🔒 로컬 환경: AdSense 광고 비활성화 (프로덕션 배포 시 활성화됨)");
+                             }
+                        </script>
+                    </div>
+                </div>
+            </aside>
         </div>
 
-        <!-- New Stats Window -->
-        <div id="stats-window" class="hidden">
-            <h2>Cosmic Mission Center</h2>
-            <div id="stats-tabs">
-                <button id="tab-stats-btn" class="active">Stats</button>
-                <button id="tab-achievements-btn">Achievements</button>
-            </div>
-            
-            <div id="stats-tab-content">
-                <div id="stat-list">
-                    <p>Real-time DPS: <span id="stat-dps">0</span></p>
-                    <p>Crit Chance: <span id="stat-crit-chance">0%</span></p>
-                    <p>Crit Multiplier: <span id="stat-crit-mult">x0</span></p>
-                    <p>Current Stage: <span id="stat-stage">1</span></p>
-                    <p>Total Ores Mined: <span id="stat-total-mined">0</span></p>
-                    <p>Achievement Bonus: <span id="stat-ach-bonus">+0%</span></p>
+        <!-- Bottom: Game Guide -->
+        <section id="game-guide-section">
+            <div class="guide-content">
+                <h2>Space Mining Guide</h2>
+                <div class="guide-grid">
+                    <div class="guide-card">
+                        <h3>Getting Started</h3>
+                        <p>Your automated mining ship travels between resource nodes. Each node contains precious gems that are automatically extracted as you orbit them.</p>
+                    </div>
+                    <div class="guide-card">
+                        <h3>Upgrades</h3>
+                        <p>Focus on <strong>Miner Level</strong> early on to increase base DPS. <strong>Engine Upgrades</strong> speed up movement and boost overall production.</p>
+                    </div>
+                    <div class="guide-card">
+                        <h3>Prestige</h3>
+                        <p>Once you reach higher stages, you can Prestige to earn Dark Matter. This resets your progress but allows for powerful permanent upgrades.</p>
+                    </div>
                 </div>
-                <div id="achievement-list" class="hidden">
-                    <!-- Achievements dynamically generated here -->
+                
+                <div class="adsense-banner">
+                    <!-- Horizontal Banner Ad (프로덕션 환경에서만 표시) -->
+                    <ins class="adsbygoogle"
+                         style="display:block; min-height: 100px;"
+                         data-ad-client="ca-pub-3565697632228043"
+                         data-ad-slot="YYYYYYYYYY"
+                         data-ad-format="horizontal"
+                         data-full-width-responsive="true"></ins>
+                    <script>
+                         if (window.location.protocol !== 'file:') {
+                             try {
+                                 (window.adsbygoogle = window.adsbygoogle || []).push({});
+                             } catch (e) {
+                                 console.log("AdSense 로드 실패:", e.message);
+                             }
+                         }
+                    </script>
+                </div>
+
+                <!-- Live Game Analyzer Section -->
+                <div id="live-analyzer" style="background: rgba(0, 255, 255, 0.05); padding: 30px; border-radius: 12px; border: 1px solid var(--neon-cyan); margin-bottom: 40px; text-align: center;">
+                    <h3 style="color: var(--neon-cyan); margin-bottom: 15px;">🚀 내 우주선 실시간 진단기</h3>
+                    <p style="margin-bottom: 20px; font-size: 0.9em; color: #aaa;">현재 진행 상황을 분석하여 최적의 성장 전략을 제안합니다.</p>
+                    <button id="analyze-btn" style="background: var(--neon-cyan); color: #000; font-weight: bold; padding: 12px 30px; border: none; border-radius: 25px; cursor: pointer; transition: transform 0.2s;">분석 시작하기</button>
+                    <div id="analysis-result" class="hidden" style="margin-top: 25px; padding: 20px; background: rgba(0, 0, 0, 0.4); border-radius: 8px; text-align: left; line-height: 1.8; border-left: 4px solid var(--neon-cyan);">
+                        <!-- Analysis text will appear here -->
+                    </div>
+                </div>
+
+                <div class="pro-tips">
+                    <h3>Pro Tips</h3>
+                    <ul>
+                        <li>Click on the resource nodes manually to deal extra damage!</li>
+                        <li>Watch out for Comets! Clicking them activates FEVER TIME.</li>
+                        <li>Achievements provide a global multiplier to all gem production.</li>
+                    </ul>
                 </div>
             </div>
-            <button id="close-stats-btn">Close</button>
-        </div>
-        <div id="game-info">
+        </section>
+    </div>
+
+    <!-- Modals & Overlays -->
+    <div id="game-info" class="modal">
+        <div class="modal-content">
             <h1>Infinite Space Miner</h1>
-            <p>Mine rare diamonds in the vast emptiness of space!</p>
-            <p>Instructions:</p>
-            <ul>
-                <li>Your spaceship (🚀) automatically mines diamonds (💎).</li>
-                <li>Upgrade your miner (🛠️) to increase production speed.</li>
-                <li>Upgrade your engine (⚡) to make stars flow faster and further boost production.</li>
-                <li>Press 'F' to toggle fullscreen mode.</li>
-                <li>Press 'R' to reset your progress.</li>
-                <li>Your progress is saved automatically.</li>
-            </ul>
-        </div>
-
-        <div id="ui-bottom">
-            <button id="upgrade-button-1">Upgrade 1</button>
-            <button id="upgrade-button-2">Upgrade 2</button>
+            <p>Welcome to the cosmic mining operation.</p>
+            <button id="start-game-btn">Enter Outer Space</button>
         </div>
     </div>
 
-    <div id="offline-bonus-popup" class="hidden">
-        <h3>Offline Mining Report</h3>
-        <p>You earned 💎 <span id="offline-resources-earned">0</span> while you were away!</p>
-        <button id="close-popup">Claim</button>
+    <div id="offline-bonus-popup" class="hidden modal">
+        <div class="modal-content">
+            <h3>Offline Mining Report</h3>
+            <p>You earned 💎 <span id="offline-resources-earned">0</span> while away!</p>
+            <button id="close-popup">Claim</button>
+        </div>
     </div>
 
     <footer>
-        <p>&copy; 2026 Infinite Space Miner. All rights reserved. <a href="#">Privacy Policy</a></p>
+        <p>&copy; 2026 Infinite Space Miner. <a href="#">Privacy Policy</a></p>
     </footer>
 
     <script src="main.js"></script>
