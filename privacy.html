@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>개인정보처리방침 - 인피니트 스페이스 마이너</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050510;
+            --card-bg: rgba(15, 15, 30, 0.7);
+            --neon-cyan: #00ffff;
+            --neon-purple: #bc13fe;
+            --border-style: 1px solid rgba(0, 255, 255, 0.15);
+            --text-color: #cbd0e0;
+            --heading-color: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+            line-height: 1.8;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(188, 19, 254, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 255, 255, 0.04) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        header {
+            border-bottom: var(--border-style);
+            background: rgba(5, 5, 16, 0.85);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo a {
+            color: var(--neon-cyan);
+            font-size: 1.3em;
+            font-weight: 800;
+            text-decoration: none;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+
+        .logo span {
+            color: var(--neon-purple);
+        }
+
+        .nav-links a {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: color 0.3s;
+            margin-left: 20px;
+        }
+
+        .nav-links a:hover {
+            color: var(--neon-cyan);
+        }
+
+        .main-container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        article {
+            background: var(--card-bg);
+            border: var(--border-style);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        h1 {
+            font-size: 2.2em;
+            color: var(--heading-color);
+            margin-bottom: 10px;
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+
+        .update-date {
+            text-align: center;
+            font-size: 0.9em;
+            color: #666a8a;
+            margin-bottom: 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            font-size: 1.4em;
+            color: var(--heading-color);
+            margin-top: 35px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--neon-cyan);
+            padding-left: 12px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: #cbd0e0;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            color: #cbd0e0;
+        }
+
+        strong {
+            color: var(--heading-color);
+        }
+
+        .highlight-box {
+            background: rgba(0, 255, 255, 0.03);
+            border: 1px solid rgba(0, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+
+        .highlight-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        footer {
+            border-top: var(--border-style);
+            padding: 40px 20px;
+            text-align: center;
+            background: rgba(5, 5, 16, 0.95);
+            margin-top: 80px;
+        }
+
+        footer p {
+            color: #555870;
+            font-size: 0.85em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .footer-links a {
+            color: #8f92a9;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--neon-cyan);
+        }
+
+        /* Responsive design */
+        @media (max-width: 600px) {
+            article {
+                padding: 25px 15px;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            h2 {
+                font-size: 1.25em;
+            }
+            .footer-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <a href="index.html">🛸 Space<span>Miner</span></a>
+            </div>
+            <nav class="nav-links">
+                <a href="index.html">홈으로</a>
+                <a href="guide.html">공략집</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <article>
+            <h1>개인정보처리방침</h1>
+            <div class="update-date">최근 수정일: 2026년 6월 29일</div>
+
+            <p>본 개인정보처리방침은 <strong>인피니트 스페이스 마이너</strong>(이하 "본 사이트")가 제공하는 서비스의 이용자(이하 "이용자")의 개인정보를 어떻게 수집, 이용, 보호하는지 설명합니다. 본 사이트는 관계 법령 및 구글 애드센스(Google AdSense)의 정책을 엄격히 준수합니다.</p>
+
+            <h2>1. 수집하는 개인정보 항목 및 방법</h2>
+            <p>본 사이트는 기본적으로 이용자의 이름, 이메일 주소, 연락처 등 직접적인 식별 정보를 수집하지 않습니다. 다만, 서비스 개선 및 광고 분석을 위해 웹 브라우저가 자동 생성하는 정보(IP 주소, 브라우저 유형, 방문 시간, 방문 페이지 등)가 자동으로 수집될 수 있습니다.</p>
+
+            <h2>2. 쿠키(Cookie) 및 광고 식별자 수집</h2>
+            <p>본 사이트는 이용자에게 적합하고 효율적인 맞춤형 광고 및 서비스를 제공하기 위해 이용자의 정보를 저장하고 수시로 불러오는 '쿠키(Cookie)'를 사용합니다. 쿠키는 이용자가 방문한 웹사이트 서버가 이용자의 브라우저에 전송하는 아주 작은 텍스트 파일입니다.</p>
+
+            <div class="highlight-box">
+                <p><strong>[구글 애드센스(Google AdSense) 관련 필수 공지 사항]</strong></p>
+                <ul>
+                    <li>타사 공급업체(Google 포함)는 쿠키를 사용하여 이용자의 이전 웹사이트 방문을 기반으로 광고를 게재합니다.</li>
+                    <li>Google의 광고 쿠키를 사용함으로써 Google 및 그 파트너는 이용자가 본 사이트 및 다른 웹사이트를 방문한 기록을 바탕으로 관련성 높은 맞춤형 광고를 제공할 수 있습니다.</li>
+                    <li>이용자는 Google의 <strong><a href="https://adssettings.google.com" target="_blank" style="color: var(--neon-cyan); text-decoration: underline;">광고 설정</a></strong>을 방문하여 개인 맞춤 광고 게재를 원치 않을 경우 이를 해제할 수 있습니다.</li>
+                    <li>또는 <strong><a href="https://optout.aboutads.info" target="_blank" style="color: var(--neon-cyan); text-decoration: underline;">www.aboutads.info</a></strong>를 방문하여 타사 공급업체의 개인 맞춤 광고용 쿠키 사용을 원천 차단할 수 있습니다.</li>
+                </ul>
+            </div>
+
+            <h2>3. 쿠키 설정 거부 방법</h2>
+            <p>이용자는 웹 브라우저의 옵션을 선택함으로써 모든 쿠키를 허용하거나, 쿠키가 저장될 때마다 확인을 거치거나, 모든 쿠키의 저장을 거부할 수 있습니다. 단, 쿠키 설치를 거부할 경우 일부 웹 서비스나 게임 플레이 설정 저장(자동 세이브) 등의 기능 이용에 다소 불편이 따를 수 있습니다.</p>
+            <ul>
+                <li><strong>Microsoft Edge:</strong> 설정 > 쿠키 및 사이트 권한 > 쿠키 및 사이트 데이터 관리 및 삭제</li>
+                <li><strong>Google Chrome:</strong> 설정 > 개인정보 보호 및 보안 > 인터넷 사용 기록 삭제 및 쿠키 설정</li>
+                <li><strong>Safari:</strong> 환경설정 > 크롬/개인정보 보호 > 쿠키 및 웹사이트 데이터 차단</li>
+            </ul>
+
+            <h2>4. 개인정보의 제3자 제공 및 위탁</h2>
+            <p>본 사이트는 원칙적으로 이용자의 개인정보를 외부에 제공하지 않습니다. 다만 아래의 경우는 예외로 합니다.</p>
+            <ul>
+                <li>이용자가 사전에 동의한 경우</li>
+                <li>법령의 규정에 의거하거나, 수사 목적으로 법령에 정해진 절차와 방법에 따라 수사기관의 요구가 있는 경우</li>
+            </ul>
+
+            <h2>5. 문의사항</h2>
+            <p>본 개인정보처리방침 또는 웹사이트 이용에 관한 문의 사항이 있으신 경우, 게임 내 피드백 및 개발자 이메일을 통해 접수해 주시기 바랍니다.</p>
+        </article>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="index.html">메인 게임 시작</a>
+            <a href="guide.html">공식 공략집</a>
+            <a href="privacy.html" style="color: var(--neon-cyan); font-weight: bold;">개인정보처리방침</a>
+        </div>
+        <p>&copy; 2026 Infinite Space Miner. All Rights Reserved.</p>
+    </footer>
+
+</body>
+</html>
